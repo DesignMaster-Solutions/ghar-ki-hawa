@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ghar Ki Hawa · How clean is the air inside your room?</title>
+<meta name="description" content="Free, open-source helper for Indian families: likely PM2.5 inside your room today and tomorrow, the purifier size it needs and the best hours to air it, in English and Hindi.">
+<meta name="theme-color" content="#1d3a5c">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' rx='3' fill='%231d3a5c'/%3E%3Cpath d='M3 13V7l5-4 5 4v6z' fill='%23e3a72f'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header class="top">
+  <div class="wrap top-row">
+    <a class="brand" href="/"><span class="roof" aria-hidden="true"></span><span data-t="app_name">Ghar Ki Hawa</span></a>
+    <button type="button" id="lang" class="lang" lang="hi">हिंदी</button>
+  </div>
+  <div class="wrap"><p class="tagline" data-t="tagline"></p></div>
+</header>
+
+<main class="wrap" id="main">
+  <p class="progress" id="progress" aria-live="polite"></p>
+
+  <section class="step" data-step="place">
+    <h1 data-t="place_q"></h1>
+    <label class="field"><span class="sr" data-t="place_search"></span>
+      <input id="city-q" type="search" autocomplete="off" data-ph="place_search"></label>
+    <ul class="cities" id="cities"></ul>
+    <p class="msg" id="place-msg" role="status"></p>
+    <button type="button" class="ghost" id="locate" data-t="place_locate"></button>
+  </section>
+
+  <section class="step" data-step="room" hidden>
+    <h1 data-t="room_q"></h1>
+    <p class="label" data-t="room_presets"></p>
+    <div class="chips" id="presets">
+      <button type="button" class="chip" data-preset="10,10,9" data-t="preset_bedroom"></button>
+      <button type="button" class="chip" data-preset="14,16,10" data-t="preset_living"></button>
+      <button type="button" class="chip" data-preset="20,25,10" data-t="preset_classroom"></button>
+    </div>
+    <div class="seg" role="radiogroup">
+      <label><input type="radio" name="unit" value="ft" checked><span data-t="unit_ft"></span></label>
+      <label><input type="radio" name="unit" value="m"><span data-t="unit_m"></span></label>
+    </div>
+    <div class="dims">
+      <label class="field"><span data-t="room_length"></span><input id="len" type="number" inputmode="decimal" min="0" step="0.1"></label>
+      <label class="field"><span data-t="room_width"></span><input id="wid" type="number" inputmode="decimal" min="0" step="0.1"></label>
+      <label class="field"><span data-t="room_height"></span><input id="hei" type="number" inputmode="decimal" min="0" step="0.1"></label>
+    </div>
+    <p class="msg" id="room-msg" role="alert"></p>
+  </section>
+
+  <section class="step" data-step="windows" hidden>
+    <h1 data-t="win_q"></h1>
+    <div class="options">
+      <label class="opt"><input type="radio" name="windows" value="closed"><span data-t="win_closed"></span></label>
+      <label class="opt"><input type="radio" name="windows" value="few" checked><span data-t="win_few"></span></label>
+      <label class="opt"><input type="radio" name="windows" value="open"><span data-t="win_open"></span></label>
+    </div>
+    <p class="hint" id="few-note"></p>
+  </section>
+
+  <section class="step" data-step="purifier" hidden>
+    <h1 data-t="pur_q"></h1>
+    <div class="options">
+      <label class="opt"><input type="radio" name="pur" value="none" checked><span data-t="pur_none"></span></label>
+      <label class="opt"><input type="radio" name="pur" value="commercial"><span data-t="pur_commercial"></span></label>
+      <label class="opt"><input type="radio" name="pur" value="diy"><span data-t="pur_diy"></span></label>
+    </div>
+    <div id="pur-commercial" class="sub" hidden>
+      <label class="field"><span data-t="pur_cadr"></span>
+        <span class="with-unit"><input id="cadr" type="number" inputmode="decimal" min="0">
+        <select id="cadr-unit"><option value="cfm">cfm</option><option value="m3h">m3/h</option></select></span></label>
+    </div>
+    <div id="pur-diy" class="sub" hidden>
+      <p class="label" data-t="pur_diy_pick"></p>
+      <div class="options" id="diy-list"></div>
+    </div>
+    <p class="msg" id="pur-msg" role="alert"></p>
+  </section>
+
+  <section class="step" data-step="who" hidden>
+    <h1 data-t="who_q"></h1>
+    <p class="hint" data-t="who_note"></p>
+    <div class="options">
+      <label class="opt"><input type="checkbox" name="who" value="child"><span data-t="who_child"></span></label>
+      <label class="opt"><input type="checkbox" name="who" value="old"><span data-t="who_old"></span></label>
+      <label class="opt"><input type="checkbox" name="who" value="asthma"><span data-t="who_asthma"></span></label>
+      <label class="opt"><input type="checkbox" name="who" value="heart"><span data-t="who_heart"></span></label>
+      <label class="opt"><input type="checkbox" name="who" value="pregnant"><span data-t="who_pregnant"></span></label>
+    </div>
+  </section>
+
+  <section class="step" data-step="result" hidden>
+    <div id="result" aria-live="polite"></div>
+  </section>
+
+  <nav class="nav" id="nav">
+    <button type="button" class="link" id="back" data-t="back"></button>
+    <button type="button" class="primary" id="next" data-t="next"></button>
+  </nav>
+
+  <details class="how" id="how">
+    <summary data-t="how_title"></summary>
+    <div id="how-body"></div>
+  </details>
+</main>
+
+<footer class="wrap foot">
+  <p data-t="attribution"></p>
+  <p><a href="/stats" data-t="footer_stats"></a> · <a href="https://github.com/DesignMaster-Solutions/ghar-ki-hawa"><span data-t="footer_code"></span></a> · MIT</p>
+</footer>
+<script type="module" src="app.js"></script>
+</body>
+</html>

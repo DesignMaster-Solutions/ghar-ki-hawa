@@ -4,23 +4,13 @@
 // - Forecast cache: an hourly cron stores the Open-Meteo (CAMS) PM2.5 forecast of the ~50 largest
 //   cities, so the page answers even when Open-Meteo is slow.
 import { CITIES } from './cities.js';
+import { omUrl, toHourly } from './openmeteo.js';
+
+export { omUrl };
 
 const EVENTS = new Set(['plan', 'share', 'feedback']);
 const LANGS = new Set(['en', 'hi']);
-const OM = 'https://air-quality-api.open-meteo.com/v1/air-quality';
 const reading = (x) => typeof x === 'number' && Number.isFinite(x) && x >= 0 && x <= 2000;
-
-export function omUrl(points) {
-  const lat = points.map((p) => p.lat).join(',');
-  const lon = points.map((p) => p.lon).join(',');
-  return `${OM}?latitude=${lat}&longitude=${lon}&hourly=pm2_5,pm10&timezone=Asia%2FKolkata&forecast_days=2`;
-}
-
-// Open-Meteo answers one object per location (an array when several are asked at once).
-export function toHourly(om) {
-  const h = om.hourly;
-  return h.time.slice(0, 48).map((time, i) => ({ time, pm25: h.pm2_5[i], pm10: h.pm10[i] }));
-}
 
 async function fetchOM(points, ms) {
   const res = await fetch(omUrl(points), { signal: AbortSignal.timeout(ms) });

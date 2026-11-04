@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ghar Ki Hawa · Usage numbers</title>
+<meta name="description" content="Live, anonymous usage counts of Ghar Ki Hawa: air plans made, shares, monitor readings before and after, by language and by day.">
+<meta name="theme-color" content="#1d3a5c">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header class="top"><div class="wrap top-row"><a class="brand" href="/"><span class="roof" aria-hidden="true"></span>Ghar Ki Hawa</a><span>Usage numbers</span></div></header>
+<main class="wrap">
+<h1>Live usage, counted without personal data</h1>
+<p class="hint">Every number below is a real event from the public app. We count only the event name and the language; for "Did it work?" we also keep the two monitor readings and the day. Places, rooms, health choices and IP addresses are never stored. Raw data: <a href="/api/stats">/api/stats</a> (JSON).</p>
+<h2>Totals since <span id="since"></span></h2>
+<table class="stats" id="totals"><tbody></tbody></table>
+<h2>By language</h2>
+<table class="stats" id="langs"><thead><tr><th></th><th>Plans</th><th>Shares</th><th>Feedback</th></tr></thead><tbody></tbody></table>
+<h2>By day (UTC)</h2>
+<table class="stats" id="days"><thead><tr><th>Day</th><th>Plans</th><th>Shares</th><th>Feedback</th></tr></thead><tbody></tbody></table>
+<h2>Monitor readings, before and after (PM2.5, ug/m3, as typed by users)</h2>
+<table class="stats" id="readings"><thead><tr><th>Day</th><th>Before</th><th>After</th></tr></thead><tbody></tbody></table>
+<p class="hint">Plans = result cards shown with a live forecast. Shares = taps on "Send on WhatsApp". Feedback = readings sent from "Did it work?". Readings are not checked by us.</p>
+</main>
+<footer class="wrap foot"><p>Free and open-source: <a href="https://github.com/DesignMaster-Solutions/ghar-ki-hawa">github.com/DesignMaster-Solutions/ghar-ki-hawa</a></p></footer>
+<script type="module">
+const EVENTS = ['plan', 'share', 'feedback'];
+const LABEL = { plan: 'Plans made', share: 'Shares on WhatsApp', feedback: 'Did it work? readings' };
+const { since, counts, readings } = await (await fetch('/api/stats', { cache: 'no-store' })).json();
+document.getElementById('since').textContent = since;
+const row = (cells) => `<tr>${cells.map((c, i) => (i === 0 ? `<th>${c}</th>` : `<td>${c}</td>`)).join('')}</tr>`;
+document.querySelector('#totals tbody').innerHTML = EVENTS.map((e) => row([LABEL[e], counts[`total:${e}`] || 0])).join('');
+const group = (prefix) => [...new Set(Object.keys(counts).filter((k) => k.startsWith(prefix)).map((k) => k.split(':')[1]))].sort();
+const NAME = { en: 'English', hi: 'Hindi' };
+document.querySelector('#langs tbody').innerHTML = group('lang:').map((l) => row([NAME[l] || l, ...EVENTS.map((e) => counts[`lang:${l}:${e}`] || 0)])).join('');
+document.querySelector('#days tbody').innerHTML = group('day:').reverse().map((d) => row([d, ...EVENTS.map((e) => counts[`day:${d}:${e}`] || 0)])).join('');
+document.querySelector('#readings tbody').innerHTML = readings.slice().reverse().map((r) => row([r.day, Number(r.before), Number(r.after)])).join('');
+</script>
+</body>
+</html>

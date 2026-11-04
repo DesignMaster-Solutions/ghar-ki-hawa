@@ -123,10 +123,11 @@ export function buildResult(plan) {
   blocks.push({ id: 'cadr', title: L('res_cadr'), lines: cadrLines });
 
   const best = bestAiringHours(next, 2);
-  const airText = best ? `${hhmm(best.start)}-${plusHour(best.end)}` : '';
+  const when = best && best.start.slice(0, 10) !== istHour(plan.now).slice(0, 10) ? `${L('tomorrow')} ` : '';
+  const airText = best ? `${when}${hhmm(best.start)}-${plusHour(best.end)}` : '';
   blocks.push({
     id: 'air', title: L('res_air'),
-    lines: [{ kind: 'outdoor', text: best ? L('air_line', { from: hhmm(best.start), to: plusHour(best.end), v: r0(best.mean) }) : L('air_none') }],
+    lines: [{ kind: 'outdoor', text: best ? L('air_line', { from: when + hhmm(best.start), to: plusHour(best.end), v: r0(best.mean) }) : L('air_none') }],
   });
 
   if (who.length) blocks.push({ id: 'sensitive', title: '', lines: [{ kind: 'text', text: L('sensitive') }] });
