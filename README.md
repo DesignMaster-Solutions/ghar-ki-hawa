@@ -4,7 +4,9 @@ How dirty is the air inside my room today, and what is the cheapest thing that c
 A free, open-source helper for Indian families in smog season, in English and Hindi, built for a
 cheap phone on 3G.
 
-Built for [Code for a Billion 2026](https://codeforindia.org/hackathon), track **Climate**.
+Built for [Code for a Billion 2026](https://codeforindia.org/hackathon), track **Climate**. Live at
+<https://ghar-ki-hawa.designmaster.workers.dev> (anonymous usage numbers: [/stats](https://ghar-ki-hawa.designmaster.workers.dev/stats));
+submission: [issue #51](https://github.com/karlmehta/code-for-a-billion/issues/51).
 Scope, rules and the verified sources are in [BRIEF.md](BRIEF.md): every number on screen comes
 from a cited source or from the live forecast, and an indoor estimate is always a low-high range,
 never one number.
