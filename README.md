@@ -113,7 +113,10 @@ In the **AgentFoundry IDE**: the folder was opened in AgentFoundry and **Claude 
 the AgentFoundry integrated terminal against `BRIEF.md`. Claude Code read the brief and its verified
 sources, wrote the pure model and its tests first (`node --test`), then the bilingual strings and
 result builder with the "no single indoor number" guard, the Worker with the forecast cache, cron
-and counter, the UI, and this README, committing each step with conventional commits.
+and counter, the UI, and this README, committing each step with conventional commits. Before that run, the open "TO VERIFY" items of
+the brief (equation, P/a/k ranges, DIY box measurements, CPCB text, Open-Meteo terms) were looked up
+in the published sources and appended to `BRIEF.md`. After it, the model was mutation-checked (each
+edge test seen failing on a changed limit), deployed to Cloudflare Workers and checked on a real phone.
 
 ## License
 

@@ -1,6 +1,7 @@
 name = "ghar-ki-hawa"
 main = "worker.js"
 compatibility_date = "2026-10-01"
+account_id = "1ed921eb42c9296a7db12104be5455c9" # DesignMaster (designmaster.workers.dev)
 
 # Static files are served directly; only /api/* reaches the Worker (forecast cache and anonymous counter).
 [assets]
