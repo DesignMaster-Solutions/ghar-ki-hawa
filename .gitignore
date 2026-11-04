@@ -1,0 +1,6 @@
+node_modules/
+.wrangler/
+.af-prompt.txt
+.af-build.log
+.af-run.sh
+.af-xt

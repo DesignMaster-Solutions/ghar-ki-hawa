@@ -1,0 +1,21 @@
+name = "ghar-ki-hawa"
+main = "worker.js"
+compatibility_date = "2026-10-01"
+
+# Static files are served directly; only /api/* reaches the Worker (forecast cache and anonymous counter).
+[assets]
+directory = "."
+binding = "ASSETS"
+not_found_handling = "single-page-application"
+run_worker_first = ["/api/*"]
+
+[durable_objects]
+bindings = [{ name = "COUNTER", class_name = "Counter" }]
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["Counter"]
+
+# Hourly refresh of the city forecasts (50+ cities x 24 runs, far below Open-Meteo's 10,000 calls/day).
+[triggers]
+crons = ["7 * * * *"]
