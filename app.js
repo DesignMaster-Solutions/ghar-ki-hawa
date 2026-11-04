@@ -51,7 +51,7 @@ function renderHow() {
   ];
   $('#how-body').innerHTML = `<p class="eq">${esc(L('how_eq'))}</p><p>${esc(L('how_terms'))}</p><p>${esc(L('how_low_high'))}</p>
     <ul>${rows.map(([a, s]) => `<li>${esc(a)}${s ? `<br><small>${s}</small>` : ''}</li>`).join('')}</ul>
-    <p>${esc(L('how_liao'))}</p><p>${esc(L('how_not'))}</p>
+    <p>${esc(L('how_liao'))}</p><p>${esc(L('how_not'))} <small>${src('kulshreshtha')}</small></p>
     <p>${esc(L('how_burden', { deaths: 1.67, pct: 17.8, amb: 0.98, hh: 0.61, oz: 0.17 }))} <small>${src('lancet')}</small></p>
     <h3>${esc(L('how_sources'))}</h3><ul class="src">${Object.keys(SOURCES).map((k) => `<li>${src(k)}</li>`).join('')}</ul>`;
 }

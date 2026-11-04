@@ -106,13 +106,35 @@ variant, and fail if an indoor estimate ever appears as a single number without 
   calls/day with CC BY 4.0 attribution (https://open-meteo.com/en/terms); this tool has no ads and
   no subscriptions. Shown on screen: "Air quality forecast: CAMS via Open-Meteo (CC BY 4.0)".
 
+## Checked against measurements in Delhi homes
+
+`tests/validation.test.mjs` runs the model against the PM2.5 measured inside and outside 8 Delhi
+homes: Kulshreshtha P., Khare M., "Indoor exploratory analysis of gaseous pollutants and respirable
+particulate matter at residential homes of Delhi, India", Atmospheric Pollution Research 2 (2011)
+337-350, doi:10.5094/APR.2011.038, Table 5 (GRIMM 1.107 monitors in the kitchen and outside,
+10:00-16:00, 3 days a week in summer and in winter).
+
+- **Summer**, ventilation rated "Good" to "Excellent" (Table 2): the 7 homes without a reported
+  indoor source had indoor/outdoor ratios of 0.71 to 0.97. All 7 fall inside the tool's
+  windows-open range, 0.59 to 0.99. The 8th (1.80) the authors tie to an indoor source.
+- **Winter**, doors and windows shut: 7 of 8 kitchens had 1.13 to 5.64 times the outdoor PM2.5,
+  which the authors tie to cooking fuel (wood and dung cakes at one site), incense, cleaning and
+  children playing indoors. A model with no indoor source can never pass 1, so the screen now
+  says so with these numbers: in a home that cooks on solid fuel or burns incense, the range is a
+  floor, not a ceiling.
+- The test was seen failing on a changed model: with P capped at 0.8 or k at least 0.4 per hour,
+  measured homes fall outside the range.
+
+Eight kitchens, daytime only, is a small sample. It checks the ranges; it does not replace a
+monitor in your room.
+
 ## Limits
 
 - The model is a steady-state estimate for one room. It does not include indoor sources such as
   cooking, incense, mosquito coils or smoking, which raise the real level; it assumes the outdoor
   forecast is right for your street.
-- The ranges come from US field measurements and one Delhi simulation. They are assumptions, shown
-  as low-high, not a measurement of your home. A monitor reading beats the estimate.
+- The ranges come from US field measurements and one Delhi simulation, checked against one Delhi
+  field study (above). They are assumptions, shown as low-high, not a measurement of your home. A monitor reading beats the estimate.
 - City coordinates are city centres; "use my location" within about 25 km of a listed city uses
   that city's forecast.
 - The Hindi text was written by an AI agent and needs review by a native speaker before wide use.

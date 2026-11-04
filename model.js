@@ -10,6 +10,7 @@ export const SOURCES = {
   liao: { name: 'Liao et al., IJERPH 16 (2019) 1391 (Delhi simulation, not a field measurement)', url: 'https://doi.org/10.3390/ijerph16081391' },
   epaGuide: { name: 'US EPA, Guide to Air Cleaners in the Home, 2nd ed. (2018)', url: 'https://www.epa.gov/indoor-air-quality-iaq/guide-air-cleaners-home' },
   epaDiy: { name: 'US EPA, Research on DIY Air Cleaners to Reduce Wildfire Smoke Indoors', url: 'https://www.epa.gov/air-research/research-diy-air-cleaners-reduce-wildfire-smoke-indoors' },
+  kulshreshtha: { name: 'Kulshreshtha & Khare, Atmospheric Pollution Research 2 (2011) 337, PM2.5 measured in 8 Delhi homes', url: 'https://doi.org/10.5094/APR.2011.038' },
   lancet: { name: 'India State-Level Disease Burden Initiative, Lancet Planet. Health 5 (2021) e25-e38', url: 'https://doi.org/10.1016/S2542-5196(20)30298-9' },
   openMeteo: { name: 'Open-Meteo Air Quality API (CAMS), CC BY 4.0', url: 'https://open-meteo.com/en/docs/air-quality-api' },
 };
