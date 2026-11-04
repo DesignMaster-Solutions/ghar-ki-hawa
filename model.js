@@ -78,7 +78,7 @@ export function cadrNeeded({ cOut, target, windows, volumeM3 }) {
     const f = (c) => weighted(end, cOut, c, volumeM3);
     if (f(0) <= target) return 0;
     let lo = 0, hi = 1;
-    while (f(hi) > target) hi *= 2;
+    while (f(hi) > target && hi < 1e9) hi *= 2; // cap: never loop forever
     for (let i = 0; i < 60; i++) { const m = (lo + hi) / 2; f(m) > target ? (lo = m) : (hi = m); }
     return hi; // hi always satisfies f(hi) <= target
   };
