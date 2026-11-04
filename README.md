@@ -92,7 +92,15 @@ variant, and fail if an indoor estimate ever appears as a single number without 
 - **Burden**: India State-Level Disease Burden Initiative Air Pollution Collaborators, Lancet
   Planetary Health 2021; 5: e25-e38, doi:10.1016/S2542-5196(20)30298-9: 1.67 million deaths in 2019
   (95% UI 1.42-1.92), 17.8% of all deaths; ambient particulate matter 0.98 million, household air
-  pollution 0.61 million, ambient ozone 0.17 million.
+  pollution 0.61 million, ambient ozone 0.17 million. Same paper: lost output from premature deaths
+  and illness cost US$36.8 billion in 2019 (95% UI 27.4-47.7), 1.36% of India's GDP, and Delhi had
+  the highest per-capita economic loss of any state; the population-weighted mean PM2.5 exposure
+  was 91.7 ug/m3 (95% UI 69.6-113.9).
+- **People exposed**: same collaborators, Lancet Planetary Health 2019; 3: e26-e39,
+  doi:10.1016/S2542-5196(18)30261-4: in 2017, 76.8% of India's population lived with an annual
+  population-weighted mean PM2.5 above the national limit of 40 ug/m3; Delhi, Uttar Pradesh, Bihar
+  and Haryana all averaged above 125 ug/m3; 51.4% of the deaths attributable to air pollution were
+  in people younger than 70.
 - **Forecast**: Open-Meteo Air Quality API, CAMS global forecast, hourly pm2_5 and pm10
   (https://open-meteo.com/en/docs/air-quality-api). Free for non-commercial use under 10,000
   calls/day with CC BY 4.0 attribution (https://open-meteo.com/en/terms); this tool has no ads and
