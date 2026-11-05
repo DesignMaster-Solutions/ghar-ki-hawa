@@ -129,11 +129,60 @@ particulate matter at residential homes of Delhi, India", Atmospheric Pollution 
 Eight kitchens, daytime only, is a small sample. It checks the ranges; it does not replace a
 monitor in your room.
 
+## Checked against measured outdoor PM2.5 in Delhi (backtest)
+
+Does "the best 2 hours to air the room" pick cleaner air than the real alternatives? We replayed
+the app on every day of October and November 2022, 2023, 2024 and 2025 (the smog seasons):
+
+- **Measured**: hourly PM2.5 from the U.S. Department of State monitor in New Delhi (AirNow site
+  DS1010001, "U.S. Department of State India - New Delhi"), read from the public OpenAQ archive,
+  location 8118 (`openaq-data-archive` on S3, no key).
+- **What the app would have seen**: the Open-Meteo Air Quality archive of CAMS PM2.5 for the same
+  point, the source the app uses live.
+- Each day the app is opened at 07:00 IST and `bestAiringHours()` from `model.js`, unchanged, picks
+  2 consecutive hours from the next 24 hours of CAMS. We then look at what the monitor measured in
+  those 2 hours and compare with the daytime mean (06:00-22:00), with airing out of habit at
+  08:00-10:00 or 18:00-20:00, and with the 2 hours that really were the cleanest (the ceiling).
+  Days with a missing measured hour in the pick, or fewer than 12 measured daytime hours, are
+  left out (233 of 244 days remain).
+
+| Season | Days | App picks | Daytime mean 06-22 h | App vs daytime | Best 2 h (measured) | Share of best cut | App vs 08-10 h | App vs 18-20 h | Picks 00-05 h |
+|---|---|---|---|---|---|---|---|---|---|
+| Oct-Nov 2022 | 60 | 92 | 116 | -21%, lower on 52/60 days | 68 | 50% | -38%, 50/60 | -13%, 50/60 | 6 |
+| Oct-Nov 2023 | 60 | 123 | 149 | -18%, lower on 52/60 days | 97 | 51% | -36%, 51/59 | -15%, 51/60 | 3 |
+| Oct-Nov 2024 | 60 | 109 | 148 | -27%, lower on 58/60 days | 93 | 72% | -44%, 55/60 | -16%, 49/58 | 2 |
+| Oct-Nov 2025 | 53 | 94 | 127 | -27%, lower on 50/53 days | 79 | 70% | -45%, 46/51 | -15%, 43/52 | 4 |
+| **All** | 233 | 104 | 135 | -23%, lower on 212/233 days | 85 | 61% | -40%, 202/230 | -15%, 193/230 | 15 |
+
+"App picks", "Daytime mean" and "Best 2 h" are measured PM2.5 in ug/m3. "Share of best cut" is how
+much of the gap between the daytime mean and the cleanest 2 measured hours the app's pick closed.
+
+What it shows: the app's 2 hours were 23% cleaner than the daytime average and 40% cleaner than
+airing at 08:00-10:00, and beat both on about 9 of 10 days. Against 18:00-20:00 the gain is smaller,
+15%, and the app's pick was not cleaner on 37 of 230 days. It gets about 61% of the way to the perfect choice. Where
+it is wrong: on 21 of 233 days its 2 hours were no cleaner than the daytime average, and because it does
+not limit the hours, it sent people to air the room between 01:00 and 05:00 on 15 of the 233 days
+(once at 23:00). Most picks land in the early afternoon: 129 of the 233 start at 14:00.
+
+Everything is in [evidence/backtest/](evidence/backtest/): one CSV per day (hour, measured, CAMS),
+`fetch.mjs` that rebuilds them, and `backtest.mjs` that prints this table.
+`tests/backtest.test.mjs` recomputes it from the CSVs and fails if this README disagrees; it was
+seen failing with `bestAiringHours` turned to pick the dirtiest hours.
+
+Limits of this check: Open-Meteo has no "as issued" air quality series (`pm2_5_previous_day1` is
+empty for these dates), so the backtest uses the archived CAMS series, which can be better than
+the forecast a family saw that morning. One monitor stands for the whole city, and it is outdoor
+air, not the air in a room. CAMS reads lower than the monitor here (on average 87 against 150
+ug/m3, 0.58 times), so the outdoor numbers the app shows in smog season are likely low; the ranking
+of hours, which is what the pick uses, held up. OpenAQ stamps each hourly mean at the end of its
+hour; the CSVs store it at the start, the way the app labels its hours.
+
 ## Limits
 
 - The model is a steady-state estimate for one room. It does not include indoor sources such as
   cooking, incense, mosquito coils or smoking, which raise the real level; it assumes the outdoor
-  forecast is right for your street.
+  forecast is right for your street. In Delhi's smog season the CAMS forecast read about 0.58
+  times the measured outdoor PM2.5 (backtest above).
 - The ranges come from US field measurements and one Delhi simulation, checked against one Delhi
   field study (above). They are assumptions, shown as low-high, not a measurement of your home. A monitor reading beats the estimate.
 - City coordinates are city centres; "use my location" within about 25 km of a listed city uses
