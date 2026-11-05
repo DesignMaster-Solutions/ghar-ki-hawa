@@ -69,6 +69,15 @@ test('bestAiringHours picks the cleanest consecutive pair in the next 24 h', () 
   assert.notEqual(bestAiringHours(series, 2).start, '2026-11-04T14:00');
 });
 
+test('bestAiringHours stays inside waking hours (06:00-21:00) unless told otherwise', () => {
+  const series = Array.from({ length: 24 }, (_, i) => ({ time: `2026-11-04T${String(i).padStart(2, '0')}:00`, pm25: 200 }));
+  series[2].pm25 = 5; series[3].pm25 = 5; // the cleanest pair is at night
+  series[20].pm25 = 5; series[21].pm25 = 5; // 20:00-22:00 ends after 21:00
+  series[15].pm25 = 50; series[16].pm25 = 60;
+  assert.equal(bestAiringHours(series, 2).start, '2026-11-04T15:00');
+  assert.equal(bestAiringHours(series, 2, { from: 0, to: 23 }).start, '2026-11-04T02:00');
+});
+
 test('formatRange and room size', () => {
   assert.equal(formatRange(12.4, 30.6), '12-31 ug/m3');
   assert.equal(formatRange(30, 12), '12-30 ug/m3');

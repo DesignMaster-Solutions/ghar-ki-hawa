@@ -100,13 +100,16 @@ export const DIY_PRESETS = [
   { key: 'cr4', cfm: 401, pm: 31 },
 ].map((d) => ({ ...d, low: d.cfm - d.pm, high: d.cfm + d.pm }));
 
-/** The n consecutive hours with the lowest mean pm25 among the first 24 entries. */
-export function bestAiringHours(hourly, n = 2) {
+/** The n consecutive hours with the lowest mean pm25 among the first 24 entries, every hour inside
+ *  from..to (local clock hour), so by default the pair starts at 06:00 at the earliest and ends by 21:00.
+ *  Without the limit the Delhi backtest (evidence/backtest) sent people to air the room at 01:00-05:00. */
+export function bestAiringHours(hourly, n = 2, { from = 6, to = 20 } = {}) {
   const next = hourly.slice(0, 24);
+  const awake = (h) => { const hh = Number(h.time.slice(11, 13)); return hh >= from && hh <= to; };
   let best = null;
   for (let i = 0; i + n <= next.length; i++) {
     const win = next.slice(i, i + n);
-    if (win.some((h) => !Number.isFinite(h.pm25))) continue;
+    if (win.some((h) => !Number.isFinite(h.pm25) || !awake(h))) continue;
     const mean = win.reduce((s, h) => s + h.pm25, 0) / n;
     if (!best || mean < best.mean) best = { start: win[0].time, end: win[n - 1].time, mean, index: i };
   }

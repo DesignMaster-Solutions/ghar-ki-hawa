@@ -1,5 +1,6 @@
 // Backtest of "the best 2 hours to air the room" against PM2.5 measured in New Delhi.
-// node evidence/backtest/backtest.mjs [--awake]   (reads days/*.csv written by fetch.mjs)
+// node evidence/backtest/backtest.mjs [--any-hour]   (reads days/*.csv written by fetch.mjs)
+// --any-hour replays the first version, which could pick any hour of the day.
 // Each day: the app is opened at 07:00 IST, picks 2 hours with bestAiringHours() from the CAMS series
 // of the next 24 hours, and we look at what the monitor actually measured in those 2 hours.
 import { readFileSync, readdirSync } from 'node:fs';
@@ -22,17 +23,16 @@ export function loadDays() {
 
 const pair = (rows, start) => [rows[start].measured, rows[start + 1].measured];
 
-export function evaluateDay({ day, rows }, { awakeOnly = false } = {}) {
+export function evaluateDay({ day, rows }, { anyHour = false } = {}) {
   const win = rows.slice(1, 25); // 07:00 D .. 06:00 D+1, what the app sees at 07:00
-  const keep = (h) => !awakeOnly || (hourOf(h.time) >= 6 && hourOf(h.time) <= 20);
-  const camsSeries = win.map((r) => ({ time: r.time, pm25: keep(r) ? r.cams : NaN }));
-  const pick = bestAiringHours(camsSeries, 2);
+  const hours = anyHour ? { from: 0, to: 23 } : {}; // {} = the app's own waking-hours limit
+  const pick = bestAiringHours(win.map((r) => ({ time: r.time, pm25: r.cams })), 2, hours);
   if (!pick) return null;
   const app = pair(win, pick.index);
   const daytime = rows.slice(0, 16).map((r) => r.measured).filter(Number.isFinite); // 06:00-21:00 starts
   const at = (hh) => rows.findIndex((r) => hourOf(r.time) === hh);
   const morning = pair(rows, at(8)), evening = pair(rows, at(18));
-  const best = bestAiringHours(win.map((r) => ({ time: r.time, pm25: keep(r) ? r.measured : NaN })), 2);
+  const best = bestAiringHours(win.map((r) => ({ time: r.time, pm25: r.measured })), 2, hours);
   if (!app.every(Number.isFinite) || daytime.length < 12 || !best) return null;
   return {
     day, season: day.slice(0, 4), start: pick.start, night: hourOf(pick.start) <= 5,
@@ -81,5 +81,5 @@ export function table(r) {
 }
 
 if (import.meta.url === `file://${process.argv[1]}`) {
-  console.log(table(runBacktest({ awakeOnly: process.argv.includes('--awake') })).join('\n'));
+  console.log(table(runBacktest({ anyHour: process.argv.includes('--any-hour') })).join('\n'));
 }

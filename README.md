@@ -26,7 +26,7 @@ or sent). The result card shows:
   closed, and with windows closed plus a purifier (yours, or one of the EPA size if you have none).
 - The purifier CADR the room needs to reach 60 ug/m3 (India 24-hour limit) and 15 ug/m3 (WHO
   24-hour guideline), plus the EPA "two-thirds of the floor area" rule.
-- The best 2 hours to air the room (lowest outdoor forecast in the next 24 hours).
+- The best 2 hours to air the room (lowest outdoor forecast in the next 24 hours, between 06:00 and 21:00).
 - EPA fan safety lines when a fan box is chosen.
 - "Send on WhatsApp" (`wa.me` with the plan text) and "Did it work?": two optional monitor readings,
   before and after, saved only as two numbers and the day.
@@ -140,11 +140,35 @@ the app on every day of October and November 2022, 2023, 2024 and 2025 (the smog
 - **What the app would have seen**: the Open-Meteo Air Quality archive of CAMS PM2.5 for the same
   point, the source the app uses live.
 - Each day the app is opened at 07:00 IST and `bestAiringHours()` from `model.js`, unchanged, picks
-  2 consecutive hours from the next 24 hours of CAMS. We then look at what the monitor measured in
+  2 consecutive hours between 06:00 and 21:00 from the next 24 hours of CAMS. We then look at what the monitor measured in
   those 2 hours and compare with the daytime mean (06:00-22:00), with airing out of habit at
   08:00-10:00 or 18:00-20:00, and with the 2 hours that really were the cleanest (the ceiling).
   Days with a missing measured hour in the pick, or fewer than 12 measured daytime hours, are
   left out (233 of 244 days remain).
+
+| Season | Days | App picks | Daytime mean 06-22 h | App vs daytime | Best 2 h (measured) | Share of best cut | App vs 08-10 h | App vs 18-20 h | Picks 00-05 h |
+|---|---|---|---|---|---|---|---|---|---|
+| Oct-Nov 2022 | 60 | 84 | 116 | -27%, lower on 55/60 days | 73 | 73% | -43%, 51/60 | -20%, 52/60 | 0 |
+| Oct-Nov 2023 | 60 | 120 | 149 | -19%, lower on 54/60 days | 100 | 59% | -37%, 52/59 | -17%, 54/60 | 0 |
+| Oct-Nov 2024 | 61 | 109 | 148 | -26%, lower on 59/61 days | 100 | 81% | -44%, 56/61 | -16%, 50/59 | 0 |
+| Oct-Nov 2025 | 53 | 94 | 127 | -27%, lower on 49/53 days | 80 | 72% | -45%, 45/51 | -15%, 42/52 | 0 |
+| **All** | 234 | 102 | 135 | -25%, lower on 217/234 days | 89 | 71% | -42%, 204/231 | -17%, 198/231 | 0 |
+
+"App picks", "Daytime mean" and "Best 2 h" are measured PM2.5 in ug/m3. "Share of best cut" is how
+much of the gap between the daytime mean and the cleanest 2 measured hours the app's pick closed.
+
+What it shows: the app's 2 hours were 25% cleaner than the daytime average and 42% cleaner than
+airing at 08:00-10:00, and beat both on about 9 of 10 days. Against 18:00-20:00 the gain is smaller,
+17%, and the app's pick was not cleaner on 33 of 231 days. It gets about 71% of the way to the
+cleanest 2 waking hours. Where it is wrong: on 17 of 234 days its 2 hours were no cleaner than the
+daytime average. Most picks land in the early afternoon: 137 of the 234 start at 14:00.
+
+**What the backtest changed.** The first version, the one submitted on 4 November 2026, let the 2
+hours fall at any time of day, and the backtest caught it: it sent people to air the room between
+01:00 and 05:00 on 15 of the 233 days (once at 23:00), when nobody opens a window. Since 5 November
+the app only picks hours between 06:00 and 21:00, and on the same days its picks are also slightly
+cleaner, 102 against 104 ug/m3 measured (table above). The first version, replayed the same way
+(`node evidence/backtest/backtest.mjs --any-hour`):
 
 | Season | Days | App picks | Daytime mean 06-22 h | App vs daytime | Best 2 h (measured) | Share of best cut | App vs 08-10 h | App vs 18-20 h | Picks 00-05 h |
 |---|---|---|---|---|---|---|---|---|---|
@@ -153,16 +177,6 @@ the app on every day of October and November 2022, 2023, 2024 and 2025 (the smog
 | Oct-Nov 2024 | 60 | 109 | 148 | -27%, lower on 58/60 days | 93 | 72% | -44%, 55/60 | -16%, 49/58 | 2 |
 | Oct-Nov 2025 | 53 | 94 | 127 | -27%, lower on 50/53 days | 79 | 70% | -45%, 46/51 | -15%, 43/52 | 4 |
 | **All** | 233 | 104 | 135 | -23%, lower on 212/233 days | 85 | 61% | -40%, 202/230 | -15%, 193/230 | 15 |
-
-"App picks", "Daytime mean" and "Best 2 h" are measured PM2.5 in ug/m3. "Share of best cut" is how
-much of the gap between the daytime mean and the cleanest 2 measured hours the app's pick closed.
-
-What it shows: the app's 2 hours were 23% cleaner than the daytime average and 40% cleaner than
-airing at 08:00-10:00, and beat both on about 9 of 10 days. Against 18:00-20:00 the gain is smaller,
-15%, and the app's pick was not cleaner on 37 of 230 days. It gets about 61% of the way to the perfect choice. Where
-it is wrong: on 21 of 233 days its 2 hours were no cleaner than the daytime average, and because it does
-not limit the hours, it sent people to air the room between 01:00 and 05:00 on 15 of the 233 days
-(once at 23:00). Most picks land in the early afternoon: 129 of the 233 start at 14:00.
 
 Everything is in [evidence/backtest/](evidence/backtest/): one CSV per day (hour, measured, CAMS),
 `fetch.mjs` that rebuilds them, and `backtest.mjs` that prints this table.
