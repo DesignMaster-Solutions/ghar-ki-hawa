@@ -12,7 +12,10 @@ const L = (k, v) => t(state.lang, k, v);
 const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
 
 // Anonymous counter: event name and language only (plus two readings for feedback).
+// ?nostats keeps our own tests and demo recordings out of the public impact numbers.
+const NOSTATS = new URLSearchParams(location.search).has('nostats');
 function track(event, extra = {}) {
+  if (NOSTATS) return;
   try { navigator.sendBeacon?.('/api/event', JSON.stringify({ event, lang: state.lang, ...extra })); } catch { /* offline */ }
 }
 
