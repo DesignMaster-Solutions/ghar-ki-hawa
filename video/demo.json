@@ -1,0 +1,127 @@
+{
+ "brand": "Ghar Ki Hawa · open source (MIT) · Design Master Solutions LLC",
+ "voice": "Samantha",
+ "rate": 190,
+ "bg": "#1b2f4f",
+ "accent": "#e0a82e",
+ "out": "demo.mp4",
+ "scenes": [
+  {
+   "title": "Smog season in Delhi",
+   "lines": [
+    "How dirty is the air inside",
+    "my room today, and what is",
+    "the cheapest thing that cleans it?",
+    "",
+    "Ghar Ki Hawa answers it",
+    "in English and Hindi,",
+    "on a cheap phone, for free."
+   ],
+   "shots": [
+    "shots/big-01-place.png"
+   ],
+   "say": "Smog season in Delhi. A family asks: how dirty is the air inside my room today, and what is the cheapest thing that cleans it?"
+  },
+  {
+   "title": "Five short questions",
+   "lines": [
+    "1. Place",
+    "2. Room size",
+    "3. Windows",
+    "4. Purifier: none, bought,",
+    "    or a home-made fan box",
+    "5. Who lives there",
+    "    (optional, never stored)"
+   ],
+   "shots": [
+    "shots/big-steps.png"
+   ],
+   "say": "Five short questions: city, room size, windows, purifier, and who lives there, which is never stored."
+  },
+  {
+   "title": "Outdoor PM2.5, now and next 24 h",
+   "lines": [
+    "CAMS forecast via Open-Meteo",
+    "CPCB category and the CPCB",
+    "health statement, word for word"
+   ],
+   "shots": [
+    "shots/big-06-outdoor.png"
+   ],
+   "say": "Right now Delhi's forecast is 157 micrograms of PM2.5 outside: very poor on the CPCB scale, with the official health statement, word for word."
+  },
+  {
+   "title": "Inside the room: a range",
+   "lines": [
+    "Small bedroom, Delhi, now:",
+    "Windows closed: 37-147",
+    "Closed + fan box: 1-9",
+    "(µg/m³ PM2.5)",
+    "",
+    "Always a range,",
+    "never a single number"
+   ],
+   "shots": [
+    "shots/big-indoor.png"
+   ],
+   "say": "Inside a small bedroom with the windows closed: 37 to 147. Closed, with a fan box running: 1 to 9. Always a range, never one number."
+  },
+  {
+   "title": "The purifier the room needs",
+   "lines": [
+    "Clean air the room needs:",
+    "60 µg/m³ (India): 0-15 cfm",
+    "15 µg/m³ (WHO): 9-134 cfm",
+    "EPA rule: at least 67 cfm",
+    "",
+    "Corsi-Rosenthal box,",
+    "US EPA test: 401 ± 31 cfm"
+   ],
+   "shots": [
+    "shots/big-cadr.png"
+   ],
+   "say": "The room needs up to 15 cfm of clean air for India's limit of 60, and up to 134 for the WHO guideline of 15. The US EPA tested this home-made box at about 400."
+  },
+  {
+   "title": "One tap: Hindi",
+   "lines": [
+    "The whole plan in Hindi,",
+    "CPCB statement verbatim"
+   ],
+   "shots": [
+    "shots/big-09-hindi.png"
+   ],
+   "say": "One tap, and the whole plan is in Hindi."
+  },
+  {
+   "title": "Checked against 8 Delhi homes",
+   "lines": [
+    "Kulshreshtha & Khare, Atmos. Pollut. Res. 2011: PM2.5 inside and outside 8 homes",
+    "Summer: 7 homes without an indoor source, ratio 0.71-0.97, all inside the 0.59-0.99 range",
+    "Winter: cooking fuel and incense, 1.13-5.64x outdoor: the range is a floor"
+   ],
+   "mono_cmd": "node --test tests/validation.test.mjs",
+   "mono_cwd": "..",
+   "mono_grep": [
+    "✔",
+    "✖",
+    "ℹ pass",
+    "ℹ fail"
+   ],
+   "say": "We checked the model against PM2.5 measured in eight Delhi homes. In summer, all seven without an indoor source fell inside the windows-open range. In winter, cooking fuel and incense pushed kitchens higher, so the screen calls the range a floor. A small sample: a check, not proof."
+  },
+  {
+   "title": "Ghar Ki Hawa",
+   "lines": [
+    "ghar-ki-hawa.designmaster.workers.dev",
+    "",
+    "Free, open source, no ads, no login",
+    "About 72 KB, built for 3G",
+    "Every number cites its source",
+    "",
+    "github.com/DesignMaster-Solutions/ghar-ki-hawa"
+   ],
+   "say": "Ghar Ki Hawa: free, open source, built for a cheap phone on 3G."
+  }
+ ]
+}
