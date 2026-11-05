@@ -26,7 +26,9 @@ function applyLang() {
   $('#lang').textContent = L('lang_other');
   $('#lang').lang = state.lang === 'en' ? 'hi' : 'en';
   $('#few-note').textContent = L('win_few_note', { open: ASSUMPTIONS.fewTimes.openHours, closed: ASSUMPTIONS.fewTimes.closedHours });
-  $('#diy-list').innerHTML = DIY_PRESETS.map((d, i) => `<label class="opt"><input type="radio" name="diy" value="${d.key}"${i === 4 ? ' checked' : ''}>
+  // Re-rendering for the new language must keep the box the person chose: the result is recomputed from it.
+  const diy = document.querySelector('input[name=diy]:checked')?.value ?? DIY_PRESETS[4].key;
+  $('#diy-list').innerHTML = DIY_PRESETS.map((d) => `<label class="opt"><input type="radio" name="diy" value="${d.key}"${d.key === diy ? ' checked' : ''}>
     <span>${esc(L(`diy_${d.key}`))}<small>${esc(L('diy_cadr', { cfm: d.cfm, pm: d.pm }))}</small></span></label>`).join('');
   renderCities();
   renderHow();
