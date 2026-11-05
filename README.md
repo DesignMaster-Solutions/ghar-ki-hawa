@@ -6,7 +6,7 @@ cheap phone on 3G.
 
 Built for [Code for a Billion 2026](https://codeforindia.org/hackathon), track **Climate**. Live at
 <https://ghar-ki-hawa.designmaster.workers.dev> (anonymous usage numbers: [/stats](https://ghar-ki-hawa.designmaster.workers.dev/stats));
-submission: [issue #51](https://github.com/karlmehta/code-for-a-billion/issues/59).
+submission: [issue #59](https://github.com/karlmehta/code-for-a-billion/issues/59).
 Demo video (82 s): <https://youtu.be/s7i_64pBx-w> (script and sources of every frame in [video/](video/)).
 Scope, rules and the verified sources are in [BRIEF.md](BRIEF.md): every number on screen comes
 from a cited source or from the live forecast, and an indoor estimate is always a low-high range,
