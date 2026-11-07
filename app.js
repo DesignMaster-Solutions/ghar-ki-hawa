@@ -7,7 +7,8 @@ import { omUrl, toHourly } from './openmeteo.js';
 
 const $ = (s) => document.querySelector(s);
 const STEPS = ['place', 'room', 'windows', 'purifier', 'who', 'result'];
-const state = { lang: navigator.language?.startsWith('hi') ? 'hi' : 'en', step: 0, place: null };
+const qLang = new URLSearchParams(location.search).get('lang');
+const state = { lang: ['en', 'hi'].includes(qLang) ? qLang : navigator.language?.startsWith('hi') ? 'hi' : 'en', step: 0, place: null };
 const L = (k, v) => t(state.lang, k, v);
 const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
 
