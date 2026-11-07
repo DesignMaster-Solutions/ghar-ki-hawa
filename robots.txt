@@ -1,0 +1,6 @@
+# ghar-ki-hawa: free, open-source helper for citizens of India. Everyone is welcome, including AI crawlers.
+User-agent: *
+Allow: /
+Disallow: /api/
+
+Sitemap: https://ghar-ki-hawa.designmaster.workers.dev/sitemap.xml
