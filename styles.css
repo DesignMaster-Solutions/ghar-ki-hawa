@@ -119,6 +119,7 @@ input:focus-visible, select:focus-visible, button:focus-visible, a:focus-visible
 .ln { margin: .25rem 0; }
 .ln.outdoor, .ln.cadr { font-weight: 600; }
 .ln.health { font-style: italic; }
+.ln.caution { color: var(--muted); font-size: .88rem; }
 .outdoor { border-left-width: 6px; }
 /* CPCB AQI category colours */
 .cat-good { border-left-color: #00b050; }

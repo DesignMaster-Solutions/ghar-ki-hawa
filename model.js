@@ -15,6 +15,9 @@ export const SOURCES = {
   openMeteo: { name: 'Open-Meteo Air Quality API (CAMS), CC BY 4.0', url: 'https://open-meteo.com/en/docs/air-quality-api' },
 };
 
+// evidence/backtest: CAMS mean 87 against 150 ug/m3 measured in New Delhi, Oct-Nov 2022-2025.
+export const CAMS_VS_MONITOR = 0.58;
+
 export const LIMITS = { india24h: 60, who24h: 15 }; // ug/m3, sources: naaqs, who
 
 const CATEGORIES = [

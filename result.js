@@ -2,7 +2,7 @@
 // Each line has a kind; 'indoor' lines must only show estimates through formatRange().
 import {
   naqiCategory, indoorRange, cadrNeeded, epaCadrRule, cfmToM3h, m3hToCfm, bestAiringHours,
-  formatRange, DIY_PRESETS, LIMITS, FT_TO_M,
+  formatRange, DIY_PRESETS, LIMITS, FT_TO_M, CAMS_VS_MONITOR,
 } from './model.js';
 import { t, CATEGORY_LABEL, HEALTH_GLOSS_HI } from './i18n.js';
 
@@ -76,6 +76,7 @@ export function buildResult(plan) {
       ...catLines(outNow),
       { kind: 'outdoor', text: L('out_24', { v: r0(out24), max: r0(max24) }) },
       ...catLines(out24),
+      { kind: 'caution', text: L('out_caution', { x: CAMS_VS_MONITOR }) },
     ],
   });
 

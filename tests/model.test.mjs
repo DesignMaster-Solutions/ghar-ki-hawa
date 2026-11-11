@@ -128,3 +128,18 @@ test('the result card never shows an indoor estimate as a single number', () => 
     }
   }
 });
+
+// The backtest found CAMS at 0.58 times the Delhi monitor; the card must say so, not only the README.
+test('the outdoor card warns that the forecast read low against the Delhi monitor', () => {
+  const hourly = Array.from({ length: 48 }, (_, i) => ({
+    time: `2026-11-${i < 24 ? '04' : '05'}T${String(i % 24).padStart(2, '0')}:00`, pm25: 130,
+  }));
+  for (const lang of ['en', 'hi']) {
+    const r = buildResult({
+      lang, placeName: 'Delhi', hourly, now: new Date('2026-11-04T03:40:00Z'), windows: 'closed', purifier: { type: 'none' },
+      room: { length: 14, width: 16, height: 10, unit: 'ft' },
+    });
+    const outdoor = r.blocks.find((b) => b.id === 'outdoor');
+    assert.equal(outdoor.lines.filter((l) => l.kind === 'caution' && l.text.includes('0.58')).length, 1, lang);
+  }
+});
