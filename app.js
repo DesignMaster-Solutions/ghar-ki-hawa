@@ -128,6 +128,7 @@ async function makePlan() {
   try {
     state.forecast = await getForecast(state.place);
     state.forecastAt = new Date();
+    state.monitorNow = undefined;
     renderResult();
     track('plan');
   } catch {
@@ -141,6 +142,7 @@ function renderResult() {
     lang: state.lang,
     placeName: state.place.id ? state.place.name : L('place_mine'),
     hourly: state.forecast,
+    monitorNow: state.monitorNow,
     now: new Date(),
     room: readRoom(),
     windows: document.querySelector('input[name=windows]:checked').value,
@@ -149,6 +151,11 @@ function renderResult() {
     url: `${location.origin}/`,
   });
   const lines = (b) => b.lines.map((l) => `<p class="ln ${l.kind}">${esc(l.text)}</p>`).join('');
+  const mon = `<section class="card fb"><h2>${esc(L('mon_title'))}</h2><p class="hint">${esc(L('mon_note'))}</p>
+      <form id="mon" class="fb-row" novalidate>
+        <label class="field"><span>${esc(L('mon_label'))}</span><input name="pm" type="number" inputmode="decimal" min="1" max="2000" value="${state.monitorNow ?? ''}"></label>
+        <button class="primary" type="submit">${esc(L('mon_apply'))}</button>
+      </form><p class="msg" id="mon-msg" role="alert"></p></section>`;
   const html = r.blocks.map((b) => {
     if (b.id === 'indoor') {
       return `<section class="card indoor"><h2>${esc(b.title)}</h2><p class="hint">${esc(b.note)}</p>
@@ -156,7 +163,7 @@ function renderResult() {
         ${b.rows.map((row) => `<tr><th scope="row">${esc(row.label)}</th><td>${esc(row.now)}</td><td>${esc(row.day)}</td></tr>`).join('')}
         </tbody></table></section>`;
     }
-    return `<section class="card ${b.id}${b.cat ? ` cat-${b.cat}` : ''}">${b.title ? `<h2>${esc(b.title)}</h2>` : ''}${lines(b)}</section>`;
+    return `<section class="card ${b.id}${b.cat ? ` cat-${b.cat}` : ''}">${b.title ? `<h2>${esc(b.title)}</h2>` : ''}${lines(b)}</section>${b.id === 'outdoor' ? mon : ''}`;
   }).join('');
   $('#result').innerHTML = `<h1>${esc(r.title)}</h1>${html}
     <div class="row"><a class="primary wa" id="share" href="https://wa.me/?text=${encodeURIComponent(r.shareText)}" target="_blank" rel="noopener">${esc(L('share'))}</a></div>
@@ -167,6 +174,13 @@ function renderResult() {
         <button class="primary" type="submit">${esc(L('fb_send'))}</button>
       </form><p class="msg" id="fb-msg" role="status"></p></section>`;
   $('#share').onclick = () => track('share');
+  $('#mon').onsubmit = (e) => {
+    e.preventDefault();
+    const v = new FormData(e.target).get('pm');
+    if (v !== '' && !(Number(v) >= 1 && Number(v) <= 2000)) { $('#mon-msg').textContent = L('mon_bad'); return; }
+    state.monitorNow = v === '' ? undefined : Number(v);
+    renderResult();
+  };
   $('#fb').onsubmit = (e) => {
     e.preventDefault();
     const f = new FormData(e.target);

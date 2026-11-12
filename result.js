@@ -51,8 +51,12 @@ const span = (lo, hi) => (r0(lo) === r0(hi) ? `${r0(lo)}` : `${r0(lo)}-${r0(hi)}
 export function buildResult(plan) {
   const { lang, placeName, room, windows, purifier, who = [], url = '' } = plan;
   const L = (k, v) => t(lang, k, v);
-  const next = fromNow(plan.hourly, plan.now).filter((h) => Number.isFinite(h.pm25));
-  if (!next.length) throw new Error('no forecast hours');
+  const raw = fromNow(plan.hourly, plan.now).filter((h) => Number.isFinite(h.pm25));
+  if (!raw.length) throw new Error('no forecast hours');
+  // A monitor reading for this hour rescales every hour; the forecast keeps only the shape of the day.
+  const m = plan.monitorNow;
+  const scale = m > 0 && m <= 2000 && raw[0].pm25 > 0 ? m / raw[0].pm25 : 1;
+  const next = scale === 1 ? raw : raw.map((h) => ({ ...h, pm25: h.pm25 * scale }));
   const day = next.slice(0, 24);
   const outNow = next[0].pm25;
   const out24 = day.reduce((s, h) => s + h.pm25, 0) / day.length;
@@ -76,7 +80,7 @@ export function buildResult(plan) {
       ...catLines(outNow),
       { kind: 'outdoor', text: L('out_24', { v: r0(out24), max: r0(max24) }) },
       ...catLines(out24),
-      { kind: 'caution', text: L('out_caution', { x: CAMS_VS_MONITOR }) },
+      { kind: 'caution', text: scale === 1 ? L('out_caution', { x: CAMS_VS_MONITOR }) : L('out_monitor', { m: r0(m), f: r0(raw[0].pm25), x: scale.toFixed(2) }) },
     ],
   });
 

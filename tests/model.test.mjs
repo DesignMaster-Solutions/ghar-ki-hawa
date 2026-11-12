@@ -143,3 +143,28 @@ test('the outdoor card warns that the forecast read low against the Delhi monito
     assert.equal(outdoor.lines.filter((l) => l.kind === 'caution' && l.text.includes('0.58')).length, 1, lang);
   }
 });
+
+// "Trust the monitor" has to be something the family can do: a typed reading rescales the whole plan.
+test('a monitor reading typed by the family rescales the forecast and the indoor numbers', () => {
+  const hourly = Array.from({ length: 48 }, (_, i) => ({
+    time: `2026-11-${i < 24 ? '04' : '05'}T${String(i % 24).padStart(2, '0')}:00`, pm25: 100 + (i % 24),
+  }));
+  const base = {
+    placeName: 'Delhi', hourly, now: new Date('2026-11-04T03:40:00Z'), windows: 'closed', purifier: { type: 'none' },
+    room: { length: 14, width: 16, height: 10, unit: 'ft' },
+  };
+  for (const lang of ['en', 'hi']) {
+    const plain = buildResult({ ...base, lang });
+    const fixed = buildResult({ ...base, lang, monitorNow: 218 }); // forecast for 09:00 IST is 109, so x2
+    const out = fixed.blocks.find((b) => b.id === 'outdoor');
+    assert.ok(out.lines[0].text.includes('218'), lang);
+    assert.equal(out.lines.filter((l) => l.kind === 'caution').length, 1, lang);
+    assert.ok(out.lines.find((l) => l.kind === 'caution').text.includes('109'), `${lang}: says what the forecast was`);
+    assert.ok(!out.lines.some((l) => l.text.includes('0.58')), `${lang}: the generic warning gives way`);
+    assert.equal(fixed.indoor.closed.now.high, plain.indoor.closed.now.high * 2, lang);
+    assert.equal(fixed.blocks.find((b) => b.id === 'air').lines[0].text === plain.blocks.find((b) => b.id === 'air').lines[0].text, false, lang);
+  }
+  for (const bad of [0, -5, 2001, NaN, undefined]) {
+    assert.deepEqual(buildResult({ ...base, lang: 'en', monitorNow: bad }).indoor, buildResult({ ...base, lang: 'en' }).indoor, String(bad));
+  }
+});
