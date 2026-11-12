@@ -35,9 +35,12 @@ or sent). The result card shows:
 - "Send on WhatsApp" (`wa.me` with the plan text) and "Did it work?": two optional monitor readings,
   before and after, saved only as two numbers and the day.
 - "How we estimate": the equation, every assumption with its range and its source.
+- Opens without a connection after the first visit (`sw.js`, network first). The forecast needs the
+  network; without it the app reuses the last forecast downloaded that day for the same place and the
+  card says so, with the time. No saved forecast for today: it says the forecast did not load.
 
 Static page (`index.html`, `styles.css`, `app.js`, `i18n.js`, `model.js`, `result.js`,
-`cities.js`, `openmeteo.js`), no framework, about 72 KB uncompressed. One Cloudflare Worker
+`cities.js`, `openmeteo.js`, `sw.js`), no framework, about 72 KB uncompressed. One Cloudflare Worker
 (`worker.js`) serves `/api/*`:
 
 - `GET /api/forecast?city=<id>` answers from a cache that an hourly Cron Trigger (`7 * * * *`)

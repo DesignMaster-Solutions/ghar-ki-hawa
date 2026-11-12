@@ -2,7 +2,7 @@
 import { t, STRINGS } from './i18n.js';
 import { CITIES } from './cities.js';
 import { ASSUMPTIONS, SOURCES, DIY_PRESETS, cfmToM3h } from './model.js';
-import { buildResult } from './result.js';
+import { buildResult, savedForecast } from './result.js';
 import { omUrl, toHourly } from './openmeteo.js';
 
 const $ = (s) => document.querySelector(s);
@@ -110,6 +110,8 @@ function validate(name) {
   return true;
 }
 
+const placeKey = (p) => p.id || `${p.lat},${p.lon}`;
+
 async function getForecast(place) {
   const q = place.id ? `city=${place.id}` : `lat=${place.lat}&lon=${place.lon}`;
   try {
@@ -129,9 +131,20 @@ async function makePlan() {
     state.forecast = await getForecast(state.place);
     state.forecastAt = new Date();
     state.monitorNow = undefined;
+    try { localStorage.setItem('gkh-last', JSON.stringify({ key: placeKey(state.place), at: state.forecastAt, hourly: state.forecast })); } catch { /* private mode */ }
     renderResult();
     track('plan');
   } catch {
+    // No network: today's last forecast for this place still gives a plan, and the card says how old it is.
+    let saved = null;
+    try { saved = savedForecast(localStorage.getItem('gkh-last'), placeKey(state.place), new Date()); } catch { /* private mode */ }
+    if (saved) {
+      state.forecast = saved.hourly;
+      state.forecastAt = new Date(saved.at);
+      state.monitorNow = undefined;
+      renderResult();
+      return;
+    }
     $('#result').innerHTML = `<p class="msg">${esc(L('forecast_fail'))}</p><button type="button" class="primary" id="retry">${esc(L('retry'))}</button>`;
     $('#retry').onclick = makePlan;
   }
@@ -165,7 +178,10 @@ function renderResult() {
     }
     return `<section class="card ${b.id}${b.cat ? ` cat-${b.cat}` : ''}">${b.title ? `<h2>${esc(b.title)}</h2>` : ''}${lines(b)}</section>${b.id === 'outdoor' ? mon : ''}`;
   }).join('');
-  $('#result').innerHTML = `<h1>${esc(r.title)}</h1>${html}
+  // Older than 5 minutes means it came from the saved copy (no network), never from a fresh fetch.
+  const stale = Date.now() - state.forecastAt > 300000
+    ? `<p class="msg" role="status">${esc(L('offline_plan', { time: new Date(state.forecastAt.getTime() + 330 * 60000).toISOString().slice(11, 16) }))}</p>` : '';
+  $('#result').innerHTML = `<h1>${esc(r.title)}</h1>${stale}${html}
     <div class="row"><a class="primary wa" id="share" href="https://wa.me/?text=${encodeURIComponent(r.shareText)}" target="_blank" rel="noopener">${esc(L('share'))}</a></div>
     <section class="card fb"><h2>${esc(L('fb_title'))}</h2><p class="hint">${esc(L('fb_note'))}</p>
       <form id="fb" class="fb-row" novalidate>
@@ -230,6 +246,9 @@ $('#next').onclick = () => {
   if (name === 'who') makePlan(); else go(state.step + 1);
 };
 $('#back').onclick = () => go(STEPS[state.step] === 'result' ? 1 : state.step - 1);
+
+// Opens offline after the first visit (sw.js); the forecast still needs the network, or today's saved copy.
+navigator.serviceWorker?.register('sw.js').catch(() => {});
 
 if (!STRINGS[state.lang]) state.lang = 'en';
 applyLang();

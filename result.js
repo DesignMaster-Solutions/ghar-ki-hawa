@@ -18,6 +18,14 @@ export function istHour(date) {
   return new Date(date.getTime() + 330 * 60000).toISOString().slice(0, 13) + ':00';
 }
 
+/** The forecast kept from the last plan: only for the same place and the same IST day, so at least 24 h of it remain. */
+export function savedForecast(raw, key, now) {
+  try {
+    const s = JSON.parse(raw);
+    return s?.key === key && s.hourly?.[0]?.time.slice(0, 10) === istHour(now).slice(0, 10) ? s : null;
+  } catch { return null; }
+}
+
 export function fromNow(hourly, now) {
   const h = istHour(now);
   const i = hourly.findIndex((x) => x.time >= h);
