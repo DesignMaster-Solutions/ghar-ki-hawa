@@ -27,6 +27,10 @@ or sent). The result card shows:
 - The purifier CADR the room needs to reach 60 ug/m3 (India 24-hour limit) and 15 ug/m3 (WHO
   24-hour guideline), plus the EPA "two-thirds of the floor area" rule.
 - The best 2 hours to air the room (lowest outdoor forecast in the next 24 hours, between 06:00 and 21:00).
+- "Have a monitor reading?": type the outdoor PM2.5 a nearby monitor shows now and every hour of the
+  forecast is multiplied by monitor/forecast, so the indoor numbers, the CADR and the plan text follow the
+  measurement. The card says what the forecast was and the factor used. The number never leaves the phone.
+  Limit: one factor for the whole day, so the order of the hours still comes from the forecast.
 - EPA fan safety lines when a fan box is chosen.
 - "Send on WhatsApp" (`wa.me` with the plan text) and "Did it work?": two optional monitor readings,
   before and after, saved only as two numbers and the day.
