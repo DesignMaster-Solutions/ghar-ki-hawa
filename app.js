@@ -131,6 +131,7 @@ async function makePlan() {
     state.forecast = await getForecast(state.place);
     state.forecastAt = new Date();
     state.monitorNow = undefined;
+    state.stale = false;
     try { localStorage.setItem('gkh-last', JSON.stringify({ key: placeKey(state.place), at: state.forecastAt, hourly: state.forecast })); } catch { /* private mode */ }
     renderResult();
     track('plan');
@@ -141,6 +142,7 @@ async function makePlan() {
     if (saved) {
       state.forecast = saved.hourly;
       state.forecastAt = new Date(saved.at);
+      state.stale = true;
       state.monitorNow = undefined;
       renderResult();
       return;
@@ -178,8 +180,7 @@ function renderResult() {
     }
     return `<section class="card ${b.id}${b.cat ? ` cat-${b.cat}` : ''}">${b.title ? `<h2>${esc(b.title)}</h2>` : ''}${lines(b)}</section>${b.id === 'outdoor' ? mon : ''}`;
   }).join('');
-  // Older than 5 minutes means it came from the saved copy (no network), never from a fresh fetch.
-  const stale = Date.now() - state.forecastAt > 300000
+  const stale = state.stale
     ? `<p class="msg" role="status">${esc(L('offline_plan', { time: new Date(state.forecastAt.getTime() + 330 * 60000).toISOString().slice(11, 16) }))}</p>` : '';
   $('#result').innerHTML = `<h1>${esc(r.title)}</h1>${stale}${html}
     <div class="row"><a class="primary wa" id="share" href="https://wa.me/?text=${encodeURIComponent(r.shareText)}" target="_blank" rel="noopener">${esc(L('share'))}</a></div>

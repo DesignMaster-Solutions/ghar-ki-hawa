@@ -44,4 +44,7 @@ test('the reused plan says on screen that it is not fresh, in both languages', (
   const app = read('app.js');
   assert.match(app, /savedForecast\(/);
   assert.match(app, /L\('offline_plan'/);
+  // The notice follows the fallback itself, not the age of the copy: a plan remade a minute after the signal drops must say it too.
+  assert.match(app, /state\.stale = true/);
+  assert.doesNotMatch(app, /300000/);
 });
