@@ -2,13 +2,15 @@
 import { t, STRINGS } from './i18n.js';
 import { CITIES } from './cities.js';
 import { ASSUMPTIONS, SOURCES, DIY_PRESETS, cfmToM3h } from './model.js';
-import { buildResult, savedForecast } from './result.js';
+import { buildResult, savedForecast, planUrl } from './result.js';
 import { omUrl, toHourly } from './openmeteo.js';
 
 const $ = (s) => document.querySelector(s);
 const STEPS = ['place', 'room', 'windows', 'purifier', 'who', 'result'];
 const qLang = new URLSearchParams(location.search).get('lang');
-const state = { lang: ['en', 'hi'].includes(qLang) ? qLang : navigator.language?.startsWith('hi') ? 'hi' : 'en', step: 0, place: null };
+// ?city=<id> comes from a shared plan: start on the room step with that city chosen.
+const qCity = CITIES.find((c) => c.id === new URLSearchParams(location.search).get('city')) ?? null;
+const state = { lang: ['en', 'hi'].includes(qLang) ? qLang : navigator.language?.startsWith('hi') ? 'hi' : 'en', step: qCity ? 1 : 0, place: qCity };
 const L = (k, v) => t(state.lang, k, v);
 const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
 
@@ -163,7 +165,7 @@ function renderResult() {
     windows: document.querySelector('input[name=windows]:checked').value,
     purifier: readPurifier(),
     who: [...document.querySelectorAll('input[name=who]:checked')].map((x) => x.value),
-    url: `${location.origin}/`,
+    url: planUrl(location.origin, state.place, state.lang),
   });
   const lines = (b) => b.lines.map((l) => `<p class="ln ${l.kind}">${esc(l.text)}</p>`).join('');
   const mon = `<section class="card fb"><h2>${esc(L('mon_title'))}</h2><p class="hint">${esc(L('mon_note'))}</p>

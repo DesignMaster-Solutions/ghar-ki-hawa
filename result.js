@@ -156,3 +156,6 @@ export function buildResult(plan) {
   });
   return { title: L('res_title', { place: placeName }), blocks, shareText, indoor };
 }
+
+// Link sent on WhatsApp: the receiver lands on the sender's city and language, room step next.
+export const planUrl = (origin, place, lang) => `${origin}/?lang=${lang}${place?.id ? `&city=${place.id}` : ''}`;

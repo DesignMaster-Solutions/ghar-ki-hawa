@@ -168,3 +168,10 @@ test('a monitor reading typed by the family rescales the forecast and the indoor
     assert.deepEqual(buildResult({ ...base, lang: 'en', monitorNow: bad }).indoor, buildResult({ ...base, lang: 'en' }).indoor, String(bad));
   }
 });
+
+test('the WhatsApp link opens the same city and language for the receiver', async () => {
+  const { planUrl } = await import('../result.js');
+  assert.equal(planUrl('https://x', { id: 'delhi', name: 'Delhi' }, 'hi'), 'https://x/?lang=hi&city=delhi');
+  // A GPS spot is the sender's home: it never goes in the link.
+  assert.equal(planUrl('https://x', { lat: 28.61, lon: 77.21 }, 'en'), 'https://x/?lang=en');
+});

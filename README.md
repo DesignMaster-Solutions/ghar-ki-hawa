@@ -32,7 +32,8 @@ or sent). The result card shows:
   measurement. The card says what the forecast was and the factor used. The number never leaves the phone.
   Limit: one factor for the whole day, so the order of the hours still comes from the forecast.
 - EPA fan safety lines when a fan box is chosen.
-- "Send on WhatsApp" (`wa.me` with the plan text) and "Did it work?": two optional monitor readings,
+- "Send on WhatsApp" (`wa.me` with the plan text; the link opens the same city and language for whoever
+  receives it, `?lang=hi&city=delhi`) and "Did it work?": two optional monitor readings,
   before and after, saved only as two numbers and the day.
 - "How we estimate": the equation, every assumption with its range and its source.
 - Opens without a connection after the first visit (`sw.js`, network first). The forecast needs the
